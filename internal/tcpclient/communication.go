@@ -48,19 +48,14 @@ func (t *TcpClient) commandMessageLoop() error {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
+		t.writeConsole("Status: ", CYAN, NORMAL)
 		t.writeConsole("Authenticated\n", CYAN, ITALIC)
 
 		t.writeConsole("Enter [cmd] + [message]: ", CYAN, NORMAL)
 		msg, _ := reader.ReadString('\n')
 		t.newLine(1)
 
-		// append jwt to message for authorization
-		// message format is [jwt accessToekn] [cmd] [message]
-		authMsg := fmt.Sprintf("%s %s", t.accessToken, msg)
-
-		// TODO: use jwt access token
-
-		_, err := t.conn.Write([]byte(authMsg))
+		err := t.writeServerJwt(msg)
 
 		if err != nil {
 			t.writeConsole(fmt.Sprintf("Error sending message: %s", err), RED, BOLD)
@@ -103,11 +98,13 @@ func (t *TcpClient) authenticateWithServer() error {
 			status := resPair[0]
 			serverMsg := resPair[1]
 
-			t.writeConsole(fmt.Sprintf("From Server:\nStatus: %s\nMessage: %s\n\n", status, serverMsg), MAGENTA, NORMAL)
+			// t.writeConsole(fmt.Sprintf("From Server:\nStatus: %s\n\nMessage: %s\n\n", status, serverMsg), MAGENTA, NORMAL)
 
 			if status == AUTHENTICATED {
-				fmt.Println("Server authenticated.")
-				t.accessToken = serverMsg // temp
+				t.newLine(2)
+				fmt.Println("Server successfully authenticated..")
+				t.newLine(1)
+				t.accessToken = serverMsg
 
 				// exit out of the infinite auth loop
 				return nil
@@ -125,4 +122,17 @@ func (t *TcpClient) authenticateWithServer() error {
 			return err
 		}
 	}
+}
+
+/**
+* Writes a message to server in a slice of bytes with the auth token appended.
+**/
+func (t *TcpClient) writeServerJwt(msg string) error {
+	// append jwt to message for authorization
+	// message format is [jwt accessToekn] [cmd] [message]
+	authMsg := fmt.Sprintf("%s %s", t.accessToken, msg)
+
+	_, err := t.conn.Write([]byte(authMsg))
+
+	return err
 }
