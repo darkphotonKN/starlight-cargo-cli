@@ -48,13 +48,11 @@ func (t *TcpClient) commandMessageLoop() error {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Println("Entering Authenticated Message Loop")
+		t.writeConsole("Authenticated\n", CYAN, ITALIC)
 
-		fmt.Printf("accessToken: %s\n\n", t.accessToken)
-
-		fmt.Print("Enter [cmd] + [message]: ")
+		t.writeConsole("Enter [cmd] + [message]: ", CYAN, NORMAL)
 		msg, _ := reader.ReadString('\n')
-		fmt.Println()
+		t.newLine(1)
 
 		// append jwt to message for authorization
 		// message format is [jwt accessToekn] [cmd] [message]
@@ -65,17 +63,17 @@ func (t *TcpClient) commandMessageLoop() error {
 		_, err := t.conn.Write([]byte(authMsg))
 
 		if err != nil {
-			fmt.Println("Error sending message:", err)
+			t.writeConsole(fmt.Sprintf("Error sending message: %s", err), RED, BOLD)
 			return err
 		}
 
 		// read response and log it
 		res, err := bufio.NewReader(t.conn).ReadString('\n')
 		if err != nil {
-			fmt.Println("Error when attempting to read from connection.")
+			t.writeConsole(fmt.Sprintf("Error when attempting to read from connection: %s", err), RED, BOLD)
 		}
 
-		fmt.Println("Starlight Officer:", res)
+		t.writeConsole(fmt.Sprintf("Starlight Officer: %s", res), MAGENTA, NORMAL)
 	}
 
 }
@@ -92,10 +90,10 @@ func (t *TcpClient) authenticateWithServer() error {
 		res, err := bufio.NewReader(t.conn).ReadString('\n')
 
 		if err != nil {
-			fmt.Println("Error when attempting to read from connection during authentication loop.")
+			t.writeConsole(fmt.Sprintf("Error when attempting to read from connection: %s", err), RED, BOLD)
 		}
 
-		fmt.Println("Starlight Officer:", res)
+		t.writeConsole(fmt.Sprintf("Starlight Officer: %s", res), MAGENTA, NORMAL)
 
 		// attempt to check if server provided an authenticated status
 		resPair := strings.SplitN(res, ":", 2)
@@ -105,25 +103,25 @@ func (t *TcpClient) authenticateWithServer() error {
 			status := resPair[0]
 			serverMsg := resPair[1]
 
-			fmt.Printf("From Server:\nStatus: %s\nMessage: %s\n\n", status, serverMsg)
+			t.writeConsole(fmt.Sprintf("From Server:\nStatus: %s\nMessage: %s\n\n", status, serverMsg), MAGENTA, NORMAL)
 
 			if status == AUTHENTICATED {
 				fmt.Println("Server authenticated.")
 				t.accessToken = serverMsg // temp
-				// exit out of the infinite auth loop
 
+				// exit out of the infinite auth loop
 				return nil
 			}
 		}
 
-		fmt.Print("Enter: ")
+		t.writeConsole("Enter: ", CYAN, NORMAL)
 		msg, _ := reader.ReadString('\n')
-		fmt.Println()
+		t.newLine(1)
 
 		_, err = t.conn.Write([]byte(msg))
 
 		if err != nil {
-			fmt.Println("Error sending message:", err)
+			t.writeConsole(fmt.Sprintf("Error sending message: %s", err), RED, BOLD)
 			return err
 		}
 	}

@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 /**
@@ -59,7 +57,7 @@ func (t *TcpClient) connect() {
 **/
 func (t *TcpClient) printIntro() {
 
-	color.Cyan(`  
+	t.writeConsole(`  
  _______ _________ _______  _______  _       _________ _______          _________   _______  _______  _______  _______  _______ 
 (  ____ \\__   __/(  ___  )(  ____ )( \      \__   __/(  ____ \|\     /|\__   __/  (  ____ \(  ___  )(  ____ )(  ____ \(  ___  )
 | (    \/   ) (   | (   ) || (    )|| (         ) (   | (    \/| )   ( |   ) (     | (    \/| (   ) || (    )|| (    \/| (   ) |
@@ -68,12 +66,12 @@ func (t *TcpClient) printIntro() {
       ) |   | |   | (   ) || (\ (   | |         | |   | | \_  )| (   ) |   | |     | |      | (   ) || (\ (   | | \_  )| |   | |
 /\____) |   | |   | )   ( || ) \ \__| (____/\___) (___| (___) || )   ( |   | |     | (____/\| )   ( || ) \ \__| (___) || (___) |
 \_______)   )_(   |/     \||/   \__/(_______/\_______/(_______)|/     \|   )_(     (_______/|/     \||/   \__/(_______)(_______)
-`)
-	fmt.Println()
+`, CYAN, NORMAL)
 
+	t.newLine(3)
 	time.Sleep(time.Millisecond * 800)
-	color.Cyan("Welcome to Starlight Cargo - Your Galactic File Management System!\n\n")
+	t.writeConsole("Welcome to Starlight Cargo - Your Galactic File Management System!\n\n", CYAN, NORMAL)
 	time.Sleep(time.Millisecond * 800)
-	color.Cyan("Initializing the interstellar transport layer...\n\n")
+	t.writeConsole("Initializing the interstellar transport layer...\n\n", CYAN, BOLD)
 
 }
