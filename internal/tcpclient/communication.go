@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
 /**
-* Responsible for cli to tcp server inter-communications.
+* File responsible for cli to tcp server inter-communications.
 **/
 
 const (
@@ -45,30 +46,55 @@ func (t *TcpClient) communicateWithServer() error {
 * TODO: connection stays idle for too long.
 **/
 func (t *TcpClient) commandMessageLoop() error {
-	reader := bufio.NewReader(os.Stdin)
 
+	reader := bufio.NewReader(os.Stdin)
 	for {
 		t.writeConsole("Status: ", CYAN, NORMAL)
 		t.writeConsole("Authenticated\n", CYAN, ITALIC)
 
-		t.writeConsole("Enter [cmd] + [message]: ", CYAN, NORMAL)
-		msg, _ := reader.ReadString('\n')
 		t.newLine(1)
 
-		err := t.writeServerJwt(msg)
+		// -- menu selection --
+		t.showMainMenu()
+		msg, _ := reader.ReadString('\n')
+		trimmedMsg := strings.TrimRight(msg, "\n")
+		menuChoiceNo, err := strconv.Atoi(trimmedMsg)
 
 		if err != nil {
-			t.writeConsole(fmt.Sprintf("Error sending message: %s", err), RED, BOLD)
-			return err
+			fmt.Println("Error when attempting to convert string to int:", err)
+			continue
 		}
 
-		// read response and log it
-		res, err := bufio.NewReader(t.conn).ReadString('\n')
-		if err != nil {
-			t.writeConsole(fmt.Sprintf("Error when attempting to read from connection: %s", err), RED, BOLD)
-		}
+		switch MenuChoice(menuChoiceNo) {
+		case sendMessage:
+			// -- message mode --
+			t.writeConsole("Enter [cmd] + [message]: ", CYAN, NORMAL)
 
-		t.writeConsole(fmt.Sprintf("Starlight Officer: %s", res), MAGENTA, NORMAL)
+			msg, _ := reader.ReadString('\n')
+			t.newLine(1)
+
+			err := t.writeServerJwt(msg)
+
+			if err != nil {
+				t.writeConsole(fmt.Sprintf("Error sending message: %s", err), RED, BOLD)
+				return err
+			}
+
+			// read response and log it
+			res, err := bufio.NewReader(t.conn).ReadString('\n')
+			if err != nil {
+				t.writeConsole(fmt.Sprintf("Error when attempting to read from connection: %s", err), RED, BOLD)
+			}
+
+			t.writeConsole(fmt.Sprintf("Starlight Officer: %s", res), MAGENTA, NORMAL)
+
+		case browseFiles:
+			// -- show files --
+			fmt.Println("Show files.")
+
+		case downloadFile:
+
+		}
 	}
 
 }
@@ -122,17 +148,5 @@ func (t *TcpClient) authenticateWithServer() error {
 			return err
 		}
 	}
-}
 
-/**
-* Writes a message to server in a slice of bytes with the auth token appended.
-**/
-func (t *TcpClient) writeServerJwt(msg string) error {
-	// append jwt to message for authorization
-	// message format is [jwt accessToekn] [cmd] [message]
-	authMsg := fmt.Sprintf("%s %s", t.accessToken, msg)
-
-	_, err := t.conn.Write([]byte(authMsg))
-
-	return err
 }

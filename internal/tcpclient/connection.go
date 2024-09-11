@@ -3,11 +3,10 @@ package tcpclient
 import (
 	"fmt"
 	"net"
-	"time"
 )
 
 /**
-* Responsible connecting to the server and initializing the CLI application.
+* File responsible connecting to the server and initializing the CLI application.
 **/
 
 type TcpClient struct {
@@ -23,6 +22,7 @@ func NewTcpClient(addr string) *TcpClient {
 }
 
 func (t *TcpClient) InitCLI() {
+
 	// 1. print intro
 	t.printIntro()
 
@@ -47,31 +47,6 @@ func (t *TcpClient) connect() {
 		return
 	}
 
-	// make sure connection is accessible in the entire struct
+	// make sure connection is accessible in the entire struct instance
 	t.conn = conn
-
-}
-
-/**
-* Prints the intro to the CLI app.
-**/
-func (t *TcpClient) printIntro() {
-
-	t.writeConsole(`  
- _______ _________ _______  _______  _       _________ _______          _________   _______  _______  _______  _______  _______ 
-(  ____ \\__   __/(  ___  )(  ____ )( \      \__   __/(  ____ \|\     /|\__   __/  (  ____ \(  ___  )(  ____ )(  ____ \(  ___  )
-| (    \/   ) (   | (   ) || (    )|| (         ) (   | (    \/| )   ( |   ) (     | (    \/| (   ) || (    )|| (    \/| (   ) |
-| (_____    | |   | (___) || (____)|| |         | |   | |      | (___) |   | |     | |      | (___) || (____)|| |      | |   | |
-(_____  )   | |   |  ___  ||     __)| |         | |   | | ____ |  ___  |   | |     | |      |  ___  ||     __)| | ____ | |   | |
-      ) |   | |   | (   ) || (\ (   | |         | |   | | \_  )| (   ) |   | |     | |      | (   ) || (\ (   | | \_  )| |   | |
-/\____) |   | |   | )   ( || ) \ \__| (____/\___) (___| (___) || )   ( |   | |     | (____/\| )   ( || ) \ \__| (___) || (___) |
-\_______)   )_(   |/     \||/   \__/(_______/\_______/(_______)|/     \|   )_(     (_______/|/     \||/   \__/(_______)(_______)
-`, CYAN, NORMAL)
-
-	t.newLine(3)
-	time.Sleep(time.Millisecond * 800)
-	t.writeConsole("Welcome to Starlight Cargo - Your Galactic File Management System!\n\n", CYAN, NORMAL)
-	time.Sleep(time.Millisecond * 800)
-	t.writeConsole("Initializing the interstellar transport layer...\n\n", CYAN, BOLD)
-
 }
