@@ -93,8 +93,11 @@ func (t *TcpClient) commandMessageLoop() error {
 			fmt.Println("Show files.")
 
 		case downloadFile:
+		case uploadFile:
+			fmt.Println("uploading file")
 
 		}
+
 	}
 
 }

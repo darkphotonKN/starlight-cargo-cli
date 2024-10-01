@@ -51,6 +51,7 @@ func (t *TcpClient) printIntro() {
 	t.writeConsole("Welcome to Starlight Cargo - Your Galactic File Management System!\n\n", CYAN, NORMAL)
 	time.Sleep(time.Millisecond * 800)
 	t.writeConsole("Initializing the interstellar transport layer...\n\n", CYAN, BOLD)
+	t.writeConsole("Please login to be authenticated.\n\n", CYAN, BOLD)
 }
 
 type MenuChoice int
@@ -66,8 +67,7 @@ const (
 * Shows the main menu.
 **/
 func (t *TcpClient) showMainMenu() {
-
-	t.writeConsole("Starlight Reception Desk: Welcome. How may I assist you today?", MAGENTA, NORMAL)
+	t.writeConsole("Starlight Reception: Welcome. How may I assist you today?", MAGENTA, NORMAL)
 	t.newLine(1)
 	t.newLine(1)
 
