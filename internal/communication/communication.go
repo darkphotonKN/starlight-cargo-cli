@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/console"
-	"github.com/darkphotonKN/starlight-cargo-cli/internal/tcpclient"
+	"github.com/darkphotonKN/starlight-cargo-cli/internal/types"
 )
 
 /**
@@ -16,14 +16,14 @@ import (
 **/
 
 type Communication struct {
-	console   *console.Console
-	tcpclient *tcpclient.TcpClient
+	console *console.Console
+	client  types.ClientConnector
 }
 
-func NewCommunicationService(tcpclient *tcpclient.TcpClient, console *console.Console) *Communication {
+func NewCommunicationService(client types.ClientConnector, console *console.Console) *Communication {
 	return &Communication{
-		console:   console,
-		tcpclient: tcpclient,
+		console: console,
+		client:  client,
 	}
 }
 
@@ -32,7 +32,7 @@ func NewCommunicationService(tcpclient *tcpclient.TcpClient, console *console.Co
 **/
 func (c *Communication) CommunicateWithServer() error {
 	// -- attempt to authenticate --
-	err := c.tcpclient.AuthenticateWithServer()
+	err := c.client.AuthenticateWithServer()
 
 	if err != nil {
 		fmt.Println("Error during communication. Exiting...")
@@ -84,7 +84,7 @@ func (c *Communication) commandMessageLoop() error {
 			c.console.NewLine(1)
 
 			// read response and log it
-			conn := c.tcpclient.Conn()
+			conn := c.client.Conn()
 			res, err := bufio.NewReader(*conn).ReadString('\n')
 			if err != nil {
 				c.console.WriteConsole(fmt.Sprintf("Error when attempting to read from connection: %s", err), console.RED, console.BOLD)
