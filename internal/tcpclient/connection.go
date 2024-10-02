@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/console"
+	"github.com/darkphotonKN/starlight-cargo-cli/internal/types"
 )
 
 const (
@@ -25,7 +26,7 @@ type TcpClient struct {
 	console     *console.Console
 }
 
-func NewTcpClient(addr string, console *console.Console) *TcpClient {
+func NewTcpClient(addr string, console *console.Console) types.ClientConnector {
 	return &TcpClient{
 		addr:    addr,
 		console: console,
@@ -36,16 +37,14 @@ func NewTcpClient(addr string, console *console.Console) *TcpClient {
 * Connect to the server and set it for instance access.
 **/
 func (t *TcpClient) Connect() {
-
 	conn, err := net.Dial("tcp", t.addr)
+	// make sure connection is accessible in the entire struct instance
+	t.conn = conn
 
 	if err != nil {
 		fmt.Printf("Error when attempting to dial to tcp connection at %s, error: %s", t.addr, err)
 		return
 	}
-
-	// make sure connection is accessible in the entire struct instance
-	t.conn = conn
 	// defer t.conn.Close()
 }
 
@@ -55,6 +54,8 @@ func (t *TcpClient) Connect() {
 func (t *TcpClient) AuthenticateWithServer() error {
 	// read in arguments to send over this tcp connection
 	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("@AuthenticateWithServer conn:", t.conn)
 
 	for {
 		// read response and log it
@@ -99,7 +100,6 @@ func (t *TcpClient) AuthenticateWithServer() error {
 			return err
 		}
 	}
-
 }
 
 /**

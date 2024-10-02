@@ -31,7 +31,6 @@ func NewCommunicationService(tcpclient *tcpclient.TcpClient, console *console.Co
 * Starts a cli application for interaction between the cli and the Starlight Cargo tcp server.
 **/
 func (c *Communication) CommunicateWithServer() error {
-
 	// -- attempt to authenticate --
 	err := c.tcpclient.AuthenticateWithServer()
 
@@ -48,7 +47,6 @@ func (c *Communication) CommunicateWithServer() error {
 
 		return err
 	}
-
 	return nil
 }
 
@@ -57,8 +55,8 @@ func (c *Communication) CommunicateWithServer() error {
 * TODO: connection stays idle for too long.
 **/
 func (c *Communication) commandMessageLoop() error {
-
 	reader := bufio.NewReader(os.Stdin)
+
 	for {
 		c.console.WriteConsole("Status: ", console.CYAN, console.NORMAL)
 		c.console.WriteConsole("Authenticated\n", console.CYAN, console.ITALIC)
