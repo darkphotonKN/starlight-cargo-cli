@@ -99,7 +99,6 @@ func (c *Communication) commandMessageLoop() error {
 		case console.DownloadFile:
 		case console.UploadFile:
 			fmt.Println("uploading file")
-
 		}
 
 	}

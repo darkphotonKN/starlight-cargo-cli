@@ -4,7 +4,7 @@ import "net"
 
 type ClientConnector interface {
 	AuthenticateWithServer() error
-	Connect()
+	Connect() error
 	Conn() *net.Conn
 	Token() string
 }

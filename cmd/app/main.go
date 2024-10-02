@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/communication"
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/console"
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/tcpclient"
@@ -12,7 +14,10 @@ func main() {
 	communication := communication.NewCommunicationService(tcpClient, console)
 
 	console.PrintIntro()
-	tcpClient.Connect()
+	err := tcpClient.Connect()
+	if err != nil {
+		log.Panic("Could not connect to server.")
+	}
 	communication.CommunicateWithServer()
 
 }

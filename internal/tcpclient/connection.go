@@ -36,16 +36,17 @@ func NewTcpClient(addr string, console *console.Console) types.ClientConnector {
 /**
 * Connect to the server and set it for instance access.
 **/
-func (t *TcpClient) Connect() {
+func (t *TcpClient) Connect() error {
 	conn, err := net.Dial("tcp", t.addr)
 	// make sure connection is accessible in the entire struct instance
 	t.conn = conn
 
 	if err != nil {
 		fmt.Printf("Error when attempting to dial to tcp connection at %s, error: %s", t.addr, err)
-		return
+		return err
 	}
 	// defer t.conn.Close()
+	return nil
 }
 
 /**
