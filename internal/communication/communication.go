@@ -12,6 +12,10 @@ import (
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/types"
 )
 
+const (
+	fileSizeLimit int = 2048
+)
+
 /**
 * File responsible for cli to tcp server inter-communications.
 **/
@@ -66,7 +70,7 @@ func (c *Communication) commandMessageLoop() error {
 
 		c.console.NewLine(1)
 
-		// -- menu selection --
+		// -- Show Menu Selection --
 		c.console.ShowMainMenu()
 		msg, _ := reader.ReadString('\n')
 		trimmedMsg := strings.TrimRight(msg, "\n")
@@ -78,8 +82,8 @@ func (c *Communication) commandMessageLoop() error {
 		}
 
 		switch console.MenuChoice(menuChoiceNo) {
+		// -- message mode --
 		case console.SendMessage:
-			// -- message mode --
 			c.console.WriteConsole("Enter [cmd] + [message]: ", console.CYAN, console.NORMAL)
 
 			msg, _ := reader.ReadString('\n')
@@ -95,16 +99,43 @@ func (c *Communication) commandMessageLoop() error {
 
 			c.console.WriteConsole(fmt.Sprintf("Starlight Officer: %s", res), console.MAGENTA, console.NORMAL)
 
-		case console.BrowseFiles:
 			// -- show files --
+		case console.BrowseFiles:
 			fmt.Println("Show files.")
 
 		case console.DownloadFile:
+			// -- upload file --
 		case console.UploadFile:
-			fmt.Println("uploading file")
+			// request for file
+			c.console.WriteConsole("Starlight Reception Desk: Please enter your exact filepath:", console.MAGENTA, console.NORMAL)
 
+			// read file input
+			filePath, _ := reader.ReadString('\n')
+
+			fmt.Println("filePath:", filePath)
+
+			trimmedFilePath := strings.Trim(filePath, "\n")
+
+			file, err := os.Open(trimmedFilePath)
+
+			buf := make([]byte, fileSizeLimit)
+
+			n, err := file.Read(buf)
+
+			c.console.NewLine(2)
+
+			if err != nil {
+				c.console.WriteConsole("Starlight Reception Desk: File size was too large.", console.MAGENTA, console.BOLD)
+				c.console.NewLine(2)
+
+				fmt.Println("Err:", err)
+				return err
+			}
+
+			readFile := buf[:n]
+
+			c.fileService.UploadFile(readFile)
 		}
-
 	}
 
 }

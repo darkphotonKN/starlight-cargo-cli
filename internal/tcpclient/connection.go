@@ -57,8 +57,6 @@ func (t *TcpClient) AuthenticateWithServer() error {
 	// read in arguments to send over this tcp connection
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("@AuthenticateWithServer conn:", t.conn)
-
 	for {
 		// read response and log it
 		res, err := bufio.NewReader(t.conn).ReadString('\n')

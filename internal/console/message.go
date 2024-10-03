@@ -71,7 +71,7 @@ const (
 * Shows the main menu.
 **/
 func (c *Console) ShowMainMenu() {
-	c.WriteConsole("Starlight Reception: Welcome. How may I assist you today?", MAGENTA, NORMAL)
+	c.WriteConsole("Starlight Reception Desk: Welcome. How may I assist you today?", MAGENTA, NORMAL)
 	c.NewLine(1)
 	c.NewLine(1)
 
