@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/console"
+	fileservice "github.com/darkphotonKN/starlight-cargo-cli/internal/file_service"
 	"github.com/darkphotonKN/starlight-cargo-cli/internal/types"
 )
 
@@ -16,14 +17,16 @@ import (
 **/
 
 type Communication struct {
-	console *console.Console
-	client  types.ClientConnector
+	client      types.ClientConnector
+	fileService *fileservice.FileService
+	console     *console.Console
 }
 
-func NewCommunicationService(client types.ClientConnector, console *console.Console) *Communication {
+func NewCommunicationService(client types.ClientConnector, fileService *fileservice.FileService, console *console.Console) *Communication {
 	return &Communication{
-		console: console,
-		client:  client,
+		client:      client,
+		fileService: fileService,
+		console:     console,
 	}
 }
 
@@ -99,6 +102,7 @@ func (c *Communication) commandMessageLoop() error {
 		case console.DownloadFile:
 		case console.UploadFile:
 			fmt.Println("uploading file")
+
 		}
 
 	}

@@ -38,6 +38,7 @@ func NewTcpClient(addr string, console *console.Console) types.ClientConnector {
 **/
 func (t *TcpClient) Connect() error {
 	conn, err := net.Dial("tcp", t.addr)
+
 	// make sure connection is accessible in the entire struct instance
 	t.conn = conn
 
@@ -115,4 +116,9 @@ func (t *TcpClient) Conn() *net.Conn {
 // instance access token
 func (t *TcpClient) Token() string {
 	return t.accessToken
+}
+
+// For setting of mock tests
+func (t *TcpClient) SetConnection(conn net.Conn) {
+	t.conn = conn
 }
